@@ -58,7 +58,7 @@ scheduler.add_job(fetch_gold_price, "interval", minutes=10)
 scheduler.start()
 
 # Rota para acessar os dados atualizados
-@app.get("/gold-price")
+@app.get("/")
 async def get_gold_price():
     return gold_price_data
 
