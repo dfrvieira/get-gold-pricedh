@@ -1,14 +1,25 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import requests
 import time
 from apscheduler.schedulers.background import BackgroundScheduler
 
 app = FastAPI()
 
+# Configurar CORS para permitir requisições externas
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite qualquer origem (substituir por ["https://teusite.com"] se quiseres restringir)
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos os métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Permite todos os headers
+)
+
 API_URL = "https://economia.awesomeapi.com.br/last/XAU-EUR"
 gold_price_data = {}  # Dicionário global para armazenar os dados atualizados
 
 def fetch_gold_price():
+    """Função que busca o preço do ouro na API externa e atualiza os valores."""
     global gold_price_data
     try:
         response = requests.get(API_URL)
@@ -60,6 +71,7 @@ scheduler.start()
 # Rota para acessar os dados atualizados
 @app.get("/")
 async def get_gold_price():
+    """Endpoint para obter o preço atualizado do ouro."""
     return gold_price_data
 
 # Atualizar o preço assim que o servidor iniciar
